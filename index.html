@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top-Down Shooter Game</title>
+<style>
+  canvas {
+    border: 2px solid black;
+    display: block;
+    margin: 0 auto;
+  }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<script>
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const player = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    radius: 15,
+    angle: Math.PI / 2, // Start facing upwards
+    speed: 5,
+    bullets: [],
+    fireRate: 10,
+    fireCooldown: 0,
+    draw: function() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.angle);
+      ctx.fillStyle = 'blue';
+      ctx.beginPath();
+      ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    },
+    update: function() {
+      if (keysDown['ArrowLeft']) {
+        this.angle -= 0.1;
+      }
+      if (keysDown['ArrowRight']) {
+        this.angle += 0.1;
+      }
+      if (keysDown['w'] || keysDown['W']) {
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed;
+      }
+      if ((keysDown['f'] || keysDown['F']) && this.fireCooldown <= 0) {
+        this.fire();
+        this.fireCooldown = this.fireRate;
+      }
+      this.fireCooldown--;
+    },
+    fire: function() {
+      this.bullets.push({
+        x: this.x,
+        y: this.y,
+        speed: 10,
+        angle: this.angle
+      });
+    }
+  };
+
+  const bullets = [];
+  const bulletRadius = 5;
+
+  const keysDown = {};
+
+  document.addEventListener('keydown', function(event) {
+    keysDown[event.key] = true;
+  });
+
+  document.addEventListener('keyup', function(event) {
+    delete keysDown[event.key];
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    player.draw();
+
+    for (const bullet of player.bullets) {
+      ctx.fillStyle = 'red';
+      ctx.beginPath();
+      ctx.arc(bullet.x, bullet.y, bulletRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function update() {
+    player.update();
+
+    for (const bullet of player.bullets) {
+      bullet.x += Math.cos(bullet.angle) * bullet.speed;
+      bullet.y += Math.sin(bullet.angle) * bullet.speed;
+
+      if (bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
+        player.bullets.splice(player.bullets.indexOf(bullet), 1);
+      }
+    }
+
+    draw();
+    requestAnimationFrame(update);
+  }
+
+  update();
+</script>
+</body>
+</html>
