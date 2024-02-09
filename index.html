@@ -3,70 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Platformer Game with Spikes</title>
+<title>Clicker Game</title>
 <style>
-  canvas {
-    border: 2px solid black;
-    display: block;
-    margin: 0 auto;
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  #score {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  #clickButton {
+    font-size: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
   }
 </style>
 </head>
 <body>
-<canvas id="gameCanvas" width="800" height="400"></canvas>
+<h1>Clicker Game</h1>
+<p>Click the button to increase your score!</p>
+<div id="score">Score: <span id="scoreValue">0</span></div>
+<button id="clickButton">Click Me!</button>
+
 <script>
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
+  const scoreDisplay = document.getElementById('scoreValue');
+  const clickButton = document.getElementById('clickButton');
 
-  const player = {
-    x: 50,
-    y: canvas.height - 50,
-    width: 50,
-    height: 50,
-    velocityX: 0,
-    velocityY: 0,
-    speed: 5,
-    jumpStrength: 10,
-    grounded: false,
-    jumping: false,
-    draw: function() {
-      ctx.fillStyle = 'blue';
-      ctx.fillRect(this.x, this.y, this.width, this.height);
-    },
-    update: function() {
-      // Apply gravity
-      if (!this.grounded) {
-        this.velocityY += 0.5;
-      }
+  let score = 0;
 
-      // Update position
-      this.x += this.velocityX;
-      this.y += this.velocityY;
-
-      // Check collision with floor
-      if (this.y + this.height >= canvas.height) {
-        this.y = canvas.height - this.height;
-        this.velocityY = 0;
-        this.grounded = true;
-        this.jumping = false;
-      }
-
-      // Check collision with platforms (in this example, only one platform)
-      if (this.x + this.width >= 200 && this.x <= 400 && this.y + this.height >= 250) {
-        this.y = 250 - this.height;
-        this.velocityY = 0;
-        this.grounded = true;
-        this.jumping = false;
-      } else {
-        this.grounded = false;
-      }
-
-      // Check collision with spikes
-      if (this.x + this.width >= 600 && this.x <= 650 && this.y + this.height >= 250) {
-        gameOver();
-      }
-    },
-    moveLeft: function() {
-      this.velocityX = -this.speed;
-    },
-    moveRight: function
+  clickButton.addEventListener('click', function() {
+    score++;
+    scoreDisplay.textContent = score;
+  });
+</script>
+</body>
+</html>
