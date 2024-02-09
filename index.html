@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Top-Down Shooter Game with Zombies</title>
+<title>Platformer Game with Spikes</title>
 <style>
   canvas {
     border: 2px solid black;
@@ -13,43 +13,134 @@
 </style>
 </head>
 <body>
-<canvas id="gameCanvas" width="800" height="600"></canvas>
+<canvas id="gameCanvas" width="800" height="400"></canvas>
 <script>
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
 
   const player = {
-    x: canvas.width / 2,
-    y: canvas.height / 2,
-    radius: 15,
-    angle: Math.PI / 2, // Start facing upwards
+    x: 50,
+    y: canvas.height - 50,
+    width: 50,
+    height: 50,
+    velocityX: 0,
+    velocityY: 0,
     speed: 5,
-    bullets: [],
-    fireRate: 10,
-    fireCooldown: 0,
+    jumpStrength: 10,
+    grounded: false,
+    jumping: false,
     draw: function() {
-      ctx.save();
-      ctx.translate(this.x, this.y);
-      ctx.rotate(this.angle);
       ctx.fillStyle = 'blue';
-      ctx.beginPath();
-      ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
+      ctx.fillRect(this.x, this.y, this.width, this.height);
     },
     update: function() {
-      if (keysDown['ArrowLeft']) {
-        this.angle -= 0.1;
+      // Apply gravity
+      if (!this.grounded) {
+        this.velocityY += 0.5;
       }
-      if (keysDown['ArrowRight']) {
-        this.angle += 0.1;
-      }
-      if (keysDown['w'] || keysDown['W']) {
-        this.x += Math.cos(this.angle) * this.speed;
-        this.y += Math.sin(this.angle) * this.speed;
-      }
-      if ((keysDo
 
+      // Update position
+      this.x += this.velocityX;
+      this.y += this.velocityY;
+
+      // Check collision with floor
+      if (this.y + this.height >= canvas.height) {
+        this.y = canvas.height - this.height;
+        this.velocityY = 0;
+        this.grounded = true;
+        this.jumping = false;
+      }
+
+      // Check collision with platforms (in this example, only one platform)
+      if (this.x + this.width >= 200 && this.x <= 400 && this.y + this.height >= 250) {
+        this.y = 250 - this.height;
+        this.velocityY = 0;
+        this.grounded = true;
+        this.jumping = false;
+      } else {
+        this.grounded = false;
+      }
+
+      // Check collision with spikes
+      if (this.x < 500 && this.x + this.width > 500 && this.y + this.height > canvas.height - 30) {
+        gameOver();
+      }
+    },
+    moveLeft: function() {
+      this.velocityX = -this.speed;
+    },
+    moveRight: function() {
+      this.velocityX = this.speed;
+    },
+    jump: function() {
+      if (this.grounded && !this.jumping) {
+        this.velocityY = -this.jumpStrength;
+        this.jumping = true;
+        this.grounded = false;
+      }
+    },
+    stop: function() {
+      this.velocityX = 0;
+    }
+  };
+
+  function drawPlatform(x, y, width, height) {
+    ctx.fillStyle = 'green';
+    ctx.fillRect(x, y, width, height);
+  }
+
+  function drawSpikes(x, y, width, height) {
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.moveTo(x + width / 2, y);
+    ctx.lineTo(x, y + height);
+    ctx.lineTo(x + width, y + height);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw platforms
+    drawPlatform(200, 250, 200, 20);
+
+    // Draw spikes
+    drawSpikes(500, canvas.height - 30, 50, 30);
+
+    // Draw player
+    player.draw();
+  }
+
+  function update() {
+    player.update();
+
+    draw();
+
+    requestAnimationFrame(update);
+  }
+
+  function gameOver() {
+    alert("Game Over!");
+    document.location.reload();
+  }
+
+  // Keyboard input
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowLeft') {
+      player.moveLeft();
+    } else if (event.key === 'ArrowRight') {
+      player.moveRight();
+    } else if (event.key === 'ArrowUp') {
+      player.jump();
+    }
+  });
+
+  document.addEventListener('keyup', function(event) {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      player.stop();
+    }
+  });
 
   update();
 </script>
