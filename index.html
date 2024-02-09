@@ -62,87 +62,11 @@
       }
 
       // Check collision with spikes
-      if (this.x < 500 && this.x + this.width > 500 && this.y + this.height > canvas.height - 30) {
+      if (this.x + this.width >= 600 && this.x <= 650 && this.y + this.height >= 250) {
         gameOver();
       }
     },
     moveLeft: function() {
       this.velocityX = -this.speed;
     },
-    moveRight: function() {
-      this.velocityX = this.speed;
-    },
-    jump: function() {
-      if (this.grounded && !this.jumping) {
-        this.velocityY = -this.jumpStrength;
-        this.jumping = true;
-        this.grounded = false;
-      }
-    },
-    stop: function() {
-      this.velocityX = 0;
-    }
-  };
-
-  function drawPlatform(x, y, width, height) {
-    ctx.fillStyle = 'green';
-    ctx.fillRect(x, y, width, height);
-  }
-
-  function drawSpikes(x, y, width, height) {
-    ctx.fillStyle = 'red';
-    ctx.beginPath();
-    ctx.moveTo(x + width / 2, y);
-    ctx.lineTo(x, y + height);
-    ctx.lineTo(x + width, y + height);
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw platforms
-    drawPlatform(200, 250, 200, 20);
-
-    // Draw spikes
-    drawSpikes(500, canvas.height - 30, 50, 30);
-
-    // Draw player
-    player.draw();
-  }
-
-  function update() {
-    player.update();
-
-    draw();
-
-    requestAnimationFrame(update);
-  }
-
-  function gameOver() {
-    alert("Game Over!");
-    document.location.reload();
-  }
-
-  // Keyboard input
-  document.addEventListener('keydown', function(event) {
-    if (event.key === 'ArrowLeft') {
-      player.moveLeft();
-    } else if (event.key === 'ArrowRight') {
-      player.moveRight();
-    } else if (event.key === 'ArrowUp') {
-      player.jump();
-    }
-  });
-
-  document.addEventListener('keyup', function(event) {
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-      player.stop();
-    }
-  });
-
-  update();
-</script>
-</body>
-</html>
+    moveRight: function
