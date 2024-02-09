@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Top-Down Shooter Game</title>
+<title>Top-Down Shooter Game with Zombies</title>
 <style>
   canvas {
     border: 2px solid black;
@@ -48,63 +48,8 @@
         this.x += Math.cos(this.angle) * this.speed;
         this.y += Math.sin(this.angle) * this.speed;
       }
-      if ((keysDown['f'] || keysDown['F']) && this.fireCooldown <= 0) {
-        this.fire();
-        this.fireCooldown = this.fireRate;
-      }
-      this.fireCooldown--;
-    },
-    fire: function() {
-      this.bullets.push({
-        x: this.x,
-        y: this.y,
-        speed: 10,
-        angle: this.angle
-      });
-    }
-  };
+      if ((keysDo
 
-  const bullets = [];
-  const bulletRadius = 5;
-
-  const keysDown = {};
-
-  document.addEventListener('keydown', function(event) {
-    keysDown[event.key] = true;
-  });
-
-  document.addEventListener('keyup', function(event) {
-    delete keysDown[event.key];
-  });
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    player.draw();
-
-    for (const bullet of player.bullets) {
-      ctx.fillStyle = 'red';
-      ctx.beginPath();
-      ctx.arc(bullet.x, bullet.y, bulletRadius, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  function update() {
-    player.update();
-
-    for (const bullet of player.bullets) {
-      bullet.x += Math.cos(bullet.angle) * bullet.speed;
-      bullet.y += Math.sin(bullet.angle) * bullet.speed;
-
-      if (bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
-        player.bullets.splice(player.bullets.indexOf(bullet), 1);
-      }
-    }
-
-    draw();
-    requestAnimationFrame(update);
-  }
 
   update();
 </script>
