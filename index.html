@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clicker Game</title>
+<title>my clicker game</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -21,7 +21,7 @@
 </style>
 </head>
 <body>
-<h1>Clicker Game</h1>
+<h1>Clicker Game with Local Storage</h1>
 <p>Click the button to increase your score!</p>
 <div id="score">Score: <span id="scoreValue">0</span></div>
 <button id="clickButton">Click Me!</button>
@@ -30,11 +30,14 @@
   const scoreDisplay = document.getElementById('scoreValue');
   const clickButton = document.getElementById('clickButton');
 
-  let score = 0;
+  let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+
+  scoreDisplay.textContent = score;
 
   clickButton.addEventListener('click', function() {
     score++;
     scoreDisplay.textContent = score;
+    localStorage.setItem('score', score);
   });
 </script>
 </body>
